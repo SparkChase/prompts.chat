@@ -29,7 +29,7 @@ nvm use
 - `DATABASE_URL`：开启 connection pooling 后的应用连接地址。
 - `DIRECT_URL`：关闭 connection pooling 后的直连地址。
 
-`.env` 已创建，权限为仅当前用户读写，并被 Git 忽略。本机已配置 Neon `prompt` 项目的 `development` 分支。重新克隆时需自行创建 `.env`；若地址中还有 `replace-host.invalid`，必须替换后才能连接。保留连接地址中的 SSL 等查询参数。
+`.env` 已创建，权限为仅当前用户读写，并被 Git 忽略。本机已配置 Neon `prompt` 项目的 `development` 分支。重新克隆时需自行创建 `.env`；若地址中还有 `replace-host.invalid`，必须替换后才能连接。保留连接地址中的 SSL 等查询参数。本地已为 Neon 配置 `connect_timeout=30`、`pool_timeout=30`，应用连接限制为 5；这是针对实际遇到的首次连接超过默认等待时间的调整。
 
 `AUTH_SECRET` 已随机生成。`AUTH_URL` 和 `NEXTAUTH_URL` 当前均为 `http://localhost:3000`。
 

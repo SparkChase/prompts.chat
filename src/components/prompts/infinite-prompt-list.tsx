@@ -10,6 +10,8 @@ import { Masonry } from "@/components/ui/masonry";
 import { useFilterContext } from "./filter-context";
 import { PromptCard, type PromptCardProps } from "./prompt-card";
 import { WidgetCard } from "./widget-card";
+import { ArchiveEmptyState } from "@/components/archive/archive-empty-state";
+import config from "@/../prompts.config";
 import { injectWidgets, isWidget } from "@/lib/plugins/widgets";
 
 interface InfinitePromptListProps {
@@ -176,6 +178,10 @@ export function InfinitePromptList({
         ))}
       </div>
     );
+  }
+
+  if (prompts.length === 0 && config.homepage?.useCloneBranding) {
+    return <ArchiveEmptyState filtered={Boolean(filters.q || filters.type || filters.category || filters.tag)} />;
   }
 
   if (prompts.length === 0) {

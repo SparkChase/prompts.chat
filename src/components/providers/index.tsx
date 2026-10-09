@@ -38,7 +38,7 @@ export function Providers({ children, locale, messages, timeZone, theme, brandin
       <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme={branding.useCloneBranding ? "dark" : "system"}
           enableSystem
           disableTransitionOnChange
         >

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight, Star, Heart, Trophy, Users, HeartHandshake, Code, Lock, Building2, Github, GraduationCap, LogIn, Rocket, Quote, History } from "lucide-react";
 import { auth } from "@/lib/auth";
+import { ArchiveHome } from "@/components/archive/archive-home";
 import { getConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { DiscoveryPrompts } from "@/components/prompts/discovery-prompts";
@@ -23,6 +24,7 @@ export default async function HomePage() {
   const tNav = await getTranslations("nav");
   const session = await auth();
   const config = await getConfig();
+  if (config.homepage?.useCloneBranding) return <ArchiveHome />;
   
   const isOAuth = config.auth.provider !== "credentials";
   // Show register button only for non-logged-in users

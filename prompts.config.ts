@@ -1,16 +1,16 @@
 import { defineConfig } from "@/lib/config";
 
 // Set to true to use clone branding (hide prompts.chat repo branding)
-const useCloneBranding = false;
+const useCloneBranding = true;
 
 export default defineConfig({
   // Branding - customize for white-label
   branding: {
-    name: "prompts.chat",
-    logo: "/logo.svg",
-    logoDark: "/logo-dark.svg",
-    favicon: "/logo.svg",
-    description: "Collect, organize, and share AI prompts",
+    name: "Richard · 邪王真眼档案馆",
+    logo: "/richard/mark.svg",
+    logoDark: "/richard/mark.svg",
+    favicon: "/richard/mark.svg",
+    description: "Richard 的个人灵感档案馆。收集提示词，整理思考方法，让每一个好问题都有清晰的下一步。",
 
     // Delete this if useCloneBranding is true
     appStoreUrl: "https://apps.apple.com/tr/app/prompts-chat/id6756895736",
@@ -27,7 +27,7 @@ export default defineConfig({
     density: "default",
     // Colors (hex or oklch)
     colors: {
-      primary: "#6366f1", // Indigo
+      primary: "#a996d9", // Rikka-inspired lavender
     },
   },
 
@@ -43,7 +43,7 @@ export default defineConfig({
   // Internationalization
   i18n: {
     locales: ["en", "tr", "es", "zh", "ja", "ar", "pt", "fr", "it", "de", "nl", "ko", "ru", "he", "el", "az", "fa"],
-    defaultLocale: "en",
+    defaultLocale: "zh",
   },
 
   // Features

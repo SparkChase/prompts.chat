@@ -49,6 +49,7 @@ interface PromptFiltersProps {
 const promptTypes = ["TEXT", "STRUCTURED", "IMAGE", "VIDEO", "AUDIO"];
 
 export function PromptFilters({ categories, tags, currentFilters, aiSearchEnabled }: PromptFiltersProps) {
+  const isArchive = config.homepage?.useCloneBranding ?? false;
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
@@ -89,15 +90,17 @@ export function PromptFilters({ categories, tags, currentFilters, aiSearchEnable
 
   return (
     <div className="space-y-4">
-    <div className="space-y-4 p-0 pt-4 border-t lg:pt-4 lg:p-4 lg:border lg:rounded-lg text-sm">
+    <div className={config.homepage?.useCloneBranding ? "archive-filter-panel space-y-4 text-sm" : "space-y-4 p-0 pt-4 border-t lg:pt-4 lg:p-4 lg:border lg:rounded-lg text-sm"}>
       {/* Mobile: Compact search with filter toggle */}
       <div className="lg:hidden space-y-3">
         {/* Search bar with AI toggle and filter toggle */}
         <div className="flex gap-1.5 items-center">
-          <div className="relative flex-1">
+          {isArchive && <span className="flex-1 text-xs font-medium">{t("search.filters")}</span>}
+          <div className={isArchive ? "hidden" : "relative flex-1"}>
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder={t("search.placeholder")}
+              aria-label={t("search.search")}
               className="h-8 text-xs pl-8"
               defaultValue={currentFilters.q}
               onChange={(e) => {
@@ -131,6 +134,8 @@ export function PromptFilters({ categories, tags, currentFilters, aiSearchEnable
           <Button
             variant="outline"
             size="sm"
+            aria-label={t("search.filters")}
+            aria-expanded={showFilters}
             className="h-8 px-2 relative shrink-0"
             onClick={() => setShowFilters(!showFilters)}
           >
@@ -176,11 +181,12 @@ export function PromptFilters({ categories, tags, currentFilters, aiSearchEnable
           </Button>
         </div>
 
-        {/* Search */}
-        <div className="space-y-1.5">
+        {/* The themed header provides the primary search field. */}
+        <div className={isArchive ? "hidden" : "space-y-1.5"}>
           <Label className="text-xs">{t("search.search")}</Label>
           <Input
             placeholder={t("search.placeholder")}
+              aria-label={t("search.search")}
             className="h-8 text-sm"
             defaultValue={currentFilters.q}
             onChange={(e) => {
@@ -314,6 +320,7 @@ export function PromptFilters({ categories, tags, currentFilters, aiSearchEnable
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
             <Input
               placeholder={t("search.searchTags")}
+              aria-label={t("search.searchTags")}
               className="h-7 text-xs pl-7"
               value={tagSearch}
               onChange={(e) => setTagSearch(e.target.value)}
@@ -358,7 +365,7 @@ export function PromptFilters({ categories, tags, currentFilters, aiSearchEnable
     </div>
 
       {/* Footer links - desktop only */}
-      <div className="hidden lg:block pt-2 space-y-2">
+      <div className={config.homepage?.useCloneBranding ? "hidden" : "hidden lg:block pt-2 space-y-2"}>
         <nav className="flex flex-col gap-1.5 text-xs text-muted-foreground">
           {!config.homepage?.useCloneBranding && (
             <>

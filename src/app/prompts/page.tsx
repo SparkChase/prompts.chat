@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
+import { ArchiveHero } from "@/components/archive/archive-hero";
 import { Button } from "@/components/ui/button"
 import { InfinitePromptList } from "@/components/prompts/infinite-prompt-list";
 import { PromptFilters } from "@/components/prompts/prompt-filters";
@@ -175,6 +176,8 @@ interface PromptsPageProps {
 
 export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   const t = await getTranslations("prompts");
+  const tArchive = await getTranslations("archive");
+  const isArchive = config.homepage?.useCloneBranding ?? false;
   const tSearch = await getTranslations("search");
   const params = await searchParams;
   
@@ -286,10 +289,11 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   ]);
 
   return (
-    <div className="container py-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div className="flex items-baseline gap-2">
-          <h1 className="text-lg font-semibold">{t("title")}</h1>
+    <div className={isArchive ? "container archive-workspace" : "container py-6"}>
+      {isArchive && <ArchiveHero query={params.q} />}
+      <div className={isArchive ? "archive-library-heading" : "flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4"}>
+        <div className={isArchive ? "archive-library-title" : "flex items-baseline gap-2"}>
+          {isArchive ? <h2>{tArchive("libraryTitle")}</h2> : <h1 className="text-lg font-semibold">{t("title")}</h1>}
           <span className="text-xs text-muted-foreground">{tSearch("found", { count: total })}</span>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -299,7 +303,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
               {config.features.mcp !== false && <McpServerPopup showOfficialBranding />}
             </div>
           )}
-          <Button size="sm" className="h-8 text-xs w-full sm:w-auto" asChild>
+          <Button size="sm" className={isArchive ? "archive-create-button" : "h-8 text-xs w-full sm:w-auto"} asChild>
             <Link href="/prompts/new">
               <Plus className="h-3.5 w-3.5 mr-1" />
               {t("create")}
@@ -317,16 +321,17 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
             />
           </div>
         </Suspense>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <aside className="w-full lg:w-56 shrink-0 lg:sticky lg:top-16 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+        <div className={isArchive ? "archive-library-layout" : "flex flex-col lg:flex-row gap-6"}>
+          <aside className={isArchive ? "archive-filter-sidebar" : "w-full lg:w-56 shrink-0 lg:sticky lg:top-16 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto"}>
             <PromptFilters
               categories={categories}
               tags={tags}
               currentFilters={params}
               aiSearchEnabled={aiSearchAvailable}
             />
+            {isArchive && <p className="archive-filter-note"><Sparkles size={14} aria-hidden="true" />{tArchive("filterNote")}</p>}
           </aside>
-          <main className="flex-1 min-w-0">
+          <section className="archive-list-region flex-1 min-w-0" aria-label={t("title")}>
             <InfinitePromptList
               initialPrompts={prompts}
               initialTotal={total}
@@ -339,7 +344,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
                 sort: params.sort,
               }}
             />
-          </main>
+          </section>
         </div>
       </FilterProvider>
     </div>

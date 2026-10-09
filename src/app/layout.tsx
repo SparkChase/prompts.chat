@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { getMessages, getLocale, getTimeZone } from "next-intl/server";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/layout/header";
+import { ArchiveHeader } from "@/components/archive/archive-header";
+import { ArchiveFooter } from "@/components/archive/archive-footer";
 import { Footer } from "@/components/layout/footer";
 import { CookieConsentBanner } from "@/components/layout/cookie-consent";
 import { Analytics } from "@/components/layout/analytics";
@@ -38,80 +40,20 @@ const playfairDisplay = Playfair_Display({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
-  title: {
-    default: "prompts.chat - AI Prompts Community",
-    template: "%s | prompts.chat",
-  },
-  description:
-    "Discover, collect, and share the best AI prompts for ChatGPT, Claude, Gemini, and more. Join the largest community of AI prompt engineers and creators.",
-  keywords: [
-    "AI prompts",
-    "ChatGPT prompts",
-    "Claude prompts",
-    "prompt engineering",
-    "AI tools",
-    "prompt library",
-    "GPT prompts",
-    "AI assistant",
-    "prompt templates",
-  ],
-  authors: [{ name: "prompts.chat community" }],
-  creator: "prompts.chat",
-  publisher: "prompts.chat",
-  icons: {
-    icon: [
-      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-      { url: "/favicon/favicon.ico", sizes: "48x48" },
-    ],
-    apple: "/favicon/apple-touch-icon.png",
-    shortcut: "/favicon/favicon.svg",
-  },
-  manifest: "/favicon/site.webmanifest",
-  other: {
-    "apple-mobile-web-app-title": "prompts.chat",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "prompts.chat",
-    title: "prompts.chat - AI Prompts Community",
-    description:
-      "Discover, collect, and share the best AI prompts for ChatGPT, Claude, Gemini, and more. Join the largest community of AI prompt engineers.",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "prompts.chat - AI Prompts Community",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "prompts.chat - AI Prompts Community",
-    description:
-      "Discover, collect, and share the best AI prompts for ChatGPT, Claude, Gemini, and more.",
-    images: ["/og.png"],
-    creator: "@promptschat",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  alternates: {
-    canonical: process.env.NEXTAUTH_URL || "https://prompts.chat",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getConfig();
+  const { name, description, favicon } = config.branding;
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  return {
+    metadataBase: new URL(baseUrl),
+    title: { default: name, template: `%s | ${name}` },
+    description,
+    icons: { icon: favicon, shortcut: favicon, apple: favicon },
+    openGraph: { type: "website", siteName: name, title: name, description, images: [{ url: "/richard/social.webp", width: 1200, height: 630, alt: name }] },
+    twitter: { card: "summary_large_image", title: name, description, images: ["/richard/social.webp"] },
+    other: { "apple-mobile-web-app-title": name },
+  };
+}
 
 const radiusValues = {
   none: "0",
@@ -159,9 +101,10 @@ export default async function RootLayout({
   const timeZone = await getTimeZone();
   const config = await getConfig();
   const isRtl = isRtlLocale(locale);
+  const isArchive = config.homepage?.useCloneBranding ?? false;
 
   // Calculate theme values server-side
-  const themeClasses = `theme-${config.theme.variant} density-${config.theme.density}`;
+  const themeClasses = `theme-${config.theme.variant} density-${config.theme.density}${isArchive ? " richard-archive" : ""}`;
   const primaryOklch = hexToOklch(config.theme.colors.primary);
   const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(config.theme.colors.primary);
   const lightness = rgb 
@@ -171,8 +114,8 @@ export default async function RootLayout({
   
   const themeStyles = {
     "--radius": radiusValues[config.theme.radius],
-    "--primary": primaryOklch,
-    "--primary-foreground": foreground,
+    "--primary": isArchive ? "var(--archive-accent)" : primaryOklch,
+    "--primary-foreground": isArchive ? "var(--archive-on-accent)" : foreground,
   } as React.CSSProperties;
 
   const fontClasses = isRtl 
@@ -199,9 +142,9 @@ export default async function RootLayout({
               <LocaleDetector />
               <div className="relative min-h-screen flex flex-col">
                 <AnnouncementBanner />
-                <Header authProvider={config.auth.provider} allowRegistration={config.auth.allowRegistration} />
+                {isArchive ? <ArchiveHeader /> : <Header authProvider={config.auth.provider} allowRegistration={config.auth.allowRegistration} />}
                 <main className="flex-1">{children}</main>
-                <Footer />
+                {isArchive ? <ArchiveFooter /> : <Footer />}
                 <CookieConsentBanner />
               </div>
             </>

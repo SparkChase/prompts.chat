@@ -43,7 +43,7 @@ export async function StructuredData({ type, data }: StructuredDataProps) {
         height: 512,
       },
       description: config.branding.description,
-      sameAs: [
+      sameAs: config.homepage?.useCloneBranding ? [] : [
         "https://github.com/f/prompts.chat",
         "https://x.com/promptschat",
         "https://x.com/fkadev",

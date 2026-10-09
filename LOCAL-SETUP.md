@@ -41,7 +41,7 @@ npm run dev
 
 `db:deploy` 应用仓库已有的迁移，不创建新的迁移文件。等日志显示 ready 后，打开 `http://localhost:3000`。只有迁移和实际页面请求都成功，才算完成本地启动。
 
-当前还有 `prisma.config.ts`，其中也声明了数据库地址。后续执行迁移时须核对其实际使用的连接是否符合 Neon 的直连配置；不能仅根据 `.env.example` 的注释判断。
+`prisma.config.ts` 已明确让 Prisma CLI 使用 `DIRECT_URL`；应用的 `src/lib/db.ts` 继续使用 `DATABASE_URL`。这样迁移走直连，运行时可以走连接池。两个变量都必须配置。
 
 暂时不需要 `npm run db:seed`。现有脚本会从社区导入大量提示词，并创建使用固定演示密码的管理员；个人方法库应按自己的内容与账号需求初始化。
 

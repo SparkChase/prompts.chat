@@ -11,6 +11,7 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("DATABASE_URL"),
+    // Prisma CLI migrations use the direct connection; the app uses DATABASE_URL.
+    url: env("DIRECT_URL"),
   },
 });

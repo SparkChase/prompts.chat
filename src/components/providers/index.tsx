@@ -27,14 +27,15 @@ interface ProvidersProps {
   children: React.ReactNode;
   locale: string;
   messages: AbstractIntlMessages;
+  timeZone: string;
   theme: ThemeConfig;
   branding: BrandingConfig;
 }
 
-export function Providers({ children, locale, messages, theme, branding }: ProvidersProps) {
+export function Providers({ children, locale, messages, timeZone, theme, branding }: ProvidersProps) {
   return (
     <SessionProvider>
-      <NextIntlClientProvider locale={locale} messages={messages}>
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

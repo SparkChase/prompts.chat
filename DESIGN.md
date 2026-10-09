@@ -31,3 +31,21 @@ Branded header, responsive navigation with secondary routes in a menu, compact c
 ## Implementation constraints
 
 Use existing dependencies and Lucide icons. Keep all new UI strings in next-intl message namespaces. Do not insert mock prompts into Neon. Keep art provenance separate from MIT code licensing. Verify mobile, both themes, keyboard focus, search, filter clearing, copy feedback, and empty results.
+
+## Source map for learning
+
+- `prompts.config.ts`: Richard's brand name, asset paths, default locale and clone-brand switch.
+- `src/app/richard.css`: scoped light/dark tokens, responsive layout and state styling.
+- `src/components/archive/`: header, character hero, search, honest empty state, copyable example, homepage and footer.
+- `src/app/layout.tsx`: chooses the branded shell and derives page metadata from the configuration.
+- `src/app/prompts/page.tsx`: retains the original database queries and filter parameters, then composes the new UI around them.
+- `messages/zh.json` / `messages/en.json`: the `archive` namespace. Other locales have English fallback text for the new namespace.
+- `public/richard/ASSETS.md`: illustration and icon provenance.
+
+## Verification
+
+Verified in the running app: Chinese and English; dark and light themes; a 390px mobile viewport with no horizontal overflow; mobile navigation and filter expansion; prompt-type filtering and clearing; keyword search with its value retained, then correctly cleared; example input and clipboard output; homepage entry and login presentation. Category and tag pages return successfully after increasing the local Neon connection timeout.
+
+`npm run lint` completes with zero errors and existing warnings. An application-source TypeScript check passes. The repository-wide compiler also includes pre-existing API test typing errors (`Request` versus `NextRequest`, among others); those tests were not rewritten or excluded in the committed tsconfig. Production build and OAuth authorization were not part of this styling verification.
+
+No prompts, categories, user accounts or other content were inserted into the database by this redesign.

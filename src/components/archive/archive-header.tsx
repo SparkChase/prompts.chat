@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown-menu";
 import { useBranding } from "@/components/providers/branding-provider";
 import { setLocale } from "@/lib/i18n/client";
+import { analyticsAuth, analyticsSettings } from "@/lib/analytics";
 
 export function ArchiveHeader() {
   const t = useTranslations("archive");
@@ -27,6 +28,7 @@ export function ArchiveHeader() {
     { href: "/tags", label: nav("tags"), icon: Tags },
   ];
   const secondary = [
+    ...(session?.user ? [{ href: "/feed", label: nav("feed") }] : []),
     { href: "/skills", label: nav("skills") },
     { href: "/taste", label: nav("taste") },
     { href: "/workflows", label: nav("workflows") },
@@ -54,16 +56,16 @@ export function ArchiveHeader() {
         <div className="archive-header-actions">
           <DropdownMenu>
             <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="archive-language" aria-label={t("language")}><Globe size={18} /></Button></DropdownMenuTrigger>
-            <DropdownMenuContent align="end">{languages.map(language => <DropdownMenuItem key={language.code} onClick={() => setLocale(language.code)} aria-current={locale === language.code ? "true" : undefined}>{language.label}</DropdownMenuItem>)}</DropdownMenuContent>
+            <DropdownMenuContent align="end">{languages.map(language => <DropdownMenuItem key={language.code} onClick={() => { analyticsSettings.changeLanguage(language.code); setLocale(language.code); }} aria-current={locale === language.code ? "true" : undefined}>{language.label}</DropdownMenuItem>)}</DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="ghost" size="icon" className="archive-theme-toggle" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} aria-label={t("toggleTheme")}><Sun className="archive-sun" size={18} /><Moon className="archive-moon" size={18} /></Button>
+          <Button variant="ghost" size="icon" className="archive-theme-toggle" onClick={() => { const nextTheme = resolvedTheme === "dark" ? "light" : "dark"; analyticsSettings.changeTheme(nextTheme); setTheme(nextTheme); }} aria-label={t("toggleTheme")}><Sun className="archive-sun" size={18} /><Moon className="archive-moon" size={18} /></Button>
           {session?.user ? <DropdownMenu>
             <DropdownMenuTrigger asChild><Button variant="outline" className="archive-account"><User size={16} /><span>{session.user.name || session.user.username}</span></Button></DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild><Link href={`/${session.user.username}`}><User size={16} />{nav("profile")}</Link></DropdownMenuItem>
               <DropdownMenuItem asChild><Link href="/settings"><Settings size={16} />{nav("settings")}</Link></DropdownMenuItem>
               {session.user.role === "ADMIN" && <DropdownMenuItem asChild><Link href="/admin"><Shield size={16} />{nav("admin")}</Link></DropdownMenuItem>}
-              <DropdownMenuSeparator /><DropdownMenuItem onClick={() => signOut()}><LogOut size={16} />{nav("logout")}</DropdownMenuItem>
+              <DropdownMenuSeparator /><DropdownMenuItem onClick={() => { analyticsAuth.logout(); signOut(); }}><LogOut size={16} />{nav("logout")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu> : <Button asChild variant="outline" className="archive-login"><Link href="/login" aria-label={nav("login")}><User size={15} /><span>{nav("login")}</span></Link></Button>}
           <DropdownMenu>
@@ -72,7 +74,7 @@ export function ArchiveHeader() {
               {primary.map(item => <DropdownMenuItem key={item.href} asChild><Link href={item.href}>{item.label}</Link></DropdownMenuItem>)}
               {session?.user && <DropdownMenuItem asChild><Link href="/collection">{nav("collection")}</Link></DropdownMenuItem>}
               <DropdownMenuSeparator />{secondary.map(item => <DropdownMenuItem key={item.href} asChild><Link href={item.href}>{item.label}</Link></DropdownMenuItem>)}
-              <DropdownMenuSeparator /><DropdownMenuSub><DropdownMenuSubTrigger><Globe size={16} />{t("language")}</DropdownMenuSubTrigger><DropdownMenuSubContent>{languages.map(language => <DropdownMenuItem key={language.code} onClick={() => setLocale(language.code)}>{language.label}</DropdownMenuItem>)}</DropdownMenuSubContent></DropdownMenuSub><DropdownMenuItem asChild><Link href="/prompts/new"><Plus size={16} />{t("create")}</Link></DropdownMenuItem>
+              <DropdownMenuSeparator /><DropdownMenuSub><DropdownMenuSubTrigger><Globe size={16} />{t("language")}</DropdownMenuSubTrigger><DropdownMenuSubContent>{languages.map(language => <DropdownMenuItem key={language.code} onClick={() => { analyticsSettings.changeLanguage(language.code); setLocale(language.code); }}>{language.label}</DropdownMenuItem>)}</DropdownMenuSubContent></DropdownMenuSub><DropdownMenuItem asChild><Link href="/prompts/new"><Plus size={16} />{t("create")}</Link></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

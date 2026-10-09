@@ -2,6 +2,10 @@
 
 先让原项目在本地运行，再修改名称和风格，最后部署 Vercel。
 
+当前进度（2026-10-09）：Neon 开发分支已连接，26 个已有迁移全部应用；首页、提示词列表与提示词接口已验证正常。数据库当前为空，尚未导入方法卡，也未配置网站登录和部署 Vercel。开发分支没有自动删除期限，`production` 分支未写入应用表。
+
+本地 `.env` 暂时关闭 `PCHAT_FEATURE_AI_SEARCH` 和 `PCHAT_FEATURE_AI_GENERATION`，便于在没有模型 API 密钥时使用基本功能。
+
 ## 1. 使用 Node 24
 
 项目的 `package.json` 要求 Node 24，`.nvmrc` 已固定大版本。
@@ -25,7 +29,7 @@ nvm use
 - `DATABASE_URL`：开启 connection pooling 后的应用连接地址。
 - `DIRECT_URL`：关闭 connection pooling 后的直连地址。
 
-`.env` 已创建，权限为仅当前用户读写，并被 Git 忽略。现有数据库地址包含 `replace-host.invalid`，只是占位值，必须替换后才能连接。保留连接地址中的 SSL 等查询参数。
+`.env` 已创建，权限为仅当前用户读写，并被 Git 忽略。本机已配置 Neon `prompt` 项目的 `development` 分支。重新克隆时需自行创建 `.env`；若地址中还有 `replace-host.invalid`，必须替换后才能连接。保留连接地址中的 SSL 等查询参数。
 
 `AUTH_SECRET` 已随机生成。`AUTH_URL` 和 `NEXTAUTH_URL` 当前均为 `http://localhost:3000`。
 

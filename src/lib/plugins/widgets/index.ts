@@ -1,9 +1,9 @@
 import type { WidgetPlugin, WidgetPrompt, WidgetContext, InjectedWidget } from "./types";
 import { bookWidget } from "./book";
 import { textreamWidget } from "./textream";
-import { commandcodeWidget } from "./commandcode";
 // Sponsored widget disabled for this fork.
 // import { coderabbitWidget } from "./coderabbit";
+// import { commandcodeWidget } from "./commandcode";
 
 export * from "./types";
 
@@ -11,9 +11,9 @@ export * from "./types";
 const widgetPlugins: WidgetPlugin[] = [
   bookWidget,
   textreamWidget,
-  commandcodeWidget,
   // Sponsored widget disabled for this fork.
   // coderabbitWidget,
+  // commandcodeWidget,
 ];
 
 /**

@@ -2,7 +2,7 @@
 
 先让原项目在本地运行，再修改名称和风格，最后部署 Vercel。
 
-当前进度（2026-10-09）：Neon 开发分支已连接，26 个已有迁移全部应用；首页、提示词列表与提示词接口已验证正常。数据库当前为空，尚未导入方法卡，也未配置网站登录和部署 Vercel。开发分支没有自动删除期限，`production` 分支未写入应用表。
+当前进度（2026-10-15）：Neon 开发分支已连接，26 个已有迁移全部应用；首页、提示词列表与提示词接口已验证正常。数据库当前为空，尚未导入方法卡。登录 provider 定为 GitHub，正式域名 `https://promptchat.20040829.xyz` 已写入 `.env` 的 `AUTH_URL` / `NEXTAUTH_URL`。开发分支没有自动删除期限，`production` 分支未写入应用表。
 
 本地 `.env` 暂时关闭 `PCHAT_FEATURE_AI_SEARCH` 和 `PCHAT_FEATURE_AI_GENERATION`，便于在没有模型 API 密钥时使用基本功能。
 
@@ -31,7 +31,7 @@ nvm use
 
 `.env` 已创建，权限为仅当前用户读写，并被 Git 忽略。本机已配置 Neon `prompt` 项目的 `development` 分支。重新克隆时需自行创建 `.env`；若地址中还有 `replace-host.invalid`，必须替换后才能连接。保留连接地址中的 SSL 等查询参数。本地已为 Neon 配置 `connect_timeout=30`、`pool_timeout=30`，应用连接限制为 5；这是针对实际遇到的首次连接超过默认等待时间的调整。
 
-`AUTH_SECRET` 已随机生成。`AUTH_URL` 和 `NEXTAUTH_URL` 当前均为 `http://localhost:3000`。
+`AUTH_SECRET` 已随机生成。`AUTH_URL` 和 `NEXTAUTH_URL` 已改为正式域名 `https://promptchat.20040829.xyz`；若要在本机继续调试登录，可在 `.env.local` 中覆盖回 `http://localhost:3000`。
 
 ## 3. 检查并初始化数据库
 
@@ -66,7 +66,16 @@ npm run dev
 
 ## 5. 部署 Vercel
 
-本地流程验证成功后，再将自己的 GitHub 仓库导入 Vercel，设置 Node 24、数据库和认证环境变量，并配置正式站点的登录回调。
+把仓库导入 Vercel，Node 设为 24，并在 Project Settings → Environment Variables 中配置。`.env` 只作用于本机，Vercel 不会读取它：
+
+- `DATABASE_URL`：生产分支的池化连接地址。
+- `DIRECT_URL`：生产分支的直连地址，供 `prisma migrate deploy` 使用。
+- `AUTH_SECRET`：为正式环境单独生成，不要复用本地值。
+- `AUTH_URL` 与 `NEXTAUTH_URL`：`https://promptchat.20040829.xyz`。
+- `GITHUB_CLIENT_ID` 与 `GITHUB_CLIENT_SECRET`：GitHub OAuth App 的凭据。
+- `CRON_SECRET`：每日额度重置接口使用。
+
+GitHub OAuth App 的 Homepage URL 与 Authorization callback URL 均使用 `https://promptchat.20040829.xyz`，回调路径为 `/api/auth/callback/github`。
 
 本地、预览和正式环境应明确区分。不要让预览版本无意写入正式数据。数据库迁移作为受控部署步骤执行，不在每个预览构建中随意运行。
 
